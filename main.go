@@ -96,13 +96,13 @@ func fetchRecords(w http.ResponseWriter, r *http.Request) {
 	// 	http.Error(w, "Table name is required", http.StatusBadRequest)
 	// 	return
 	// }
-
+	/// opens connection and connect to db
 	db, err := sql.Open("odbc", fmt.Sprintf("DSN=%s;UID=%s;PWD=%s", reqBody.DSN, reqBody.UID, reqBody.PWD))
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
-	fmt.Printf("tableName :: %s", reqBody.Query)
+	fmt.Printf("query :: %s", reqBody.Query)
 	rows, err := db.Query(reqBody.Query) //"SELECT * FROM %s", reqBody.TableName
 	if err != nil {
 		log.Fatal(err)
@@ -120,7 +120,7 @@ func fetchRecords(w http.ResponseWriter, r *http.Request) {
 	// if err := rows.Err(); err != nil {
 	// 	log.Fatal(err)
 	// }
-
+	/// fetches column names
 	columns, err := rows.Columns()
 	if err != nil {
 		log.Fatal(err)
@@ -144,6 +144,7 @@ func fetchRecords(w http.ResponseWriter, r *http.Request) {
 			record[colName] = val
 		}
 
+		/// encoding json
 		json.NewEncoder(w).Encode(record)
 	}
 
